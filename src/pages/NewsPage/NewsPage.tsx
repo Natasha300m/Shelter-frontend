@@ -1,5 +1,5 @@
 function NewsPage() {
-   return <section className="containerX"></section>;
+   return <section className="containerX">news</section>;
 }
 
 export { NewsPage };

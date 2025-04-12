@@ -1,5 +1,5 @@
 import { Button } from "@radix-ui/themes";
-import { NavLink, Outlet } from "react-router";
+import { NavLink, Outlet, useLocation } from "react-router";
 import { routes } from "../global/config/routes";
 import { useState } from "react";
 
@@ -19,11 +19,11 @@ function Layout() {
          </main>
          <aside
             className={clsx(
-               `fixed bottom-8 left-1/2 -translate-x-1/2 p-3 
+               `fixed bottom-4 left-1/2 -translate-x-1/2 p-3 
                bg-(--color-panel-solid) rounded-(--radius-4) 
                border-1 border-(--gray-4)`,
                {
-                  "opacity-50": isNavClosed
+                  "!opacity-50 !p-1.5": isNavClosed
                }
             )}
          >
@@ -36,7 +36,7 @@ function Layout() {
                         to={routes.home}
                      />
                      <NavBarItem
-                        icon="pi-calendar-plus"
+                        icon="pi-calendar"
                         name="Новини"
                         to={routes.news}
                      />
@@ -46,9 +46,15 @@ function Layout() {
                         to={routes.createPost}
                      />
                      <NavBarItem
+                        icon="pi-calendar-plus"
+                        name="Додати новину"
+                        to={routes.createNewsItem}
+                     />
+                     <NavBarItem
                         icon="pi-user"
                         name="Авторизація"
                         to={routes.signup}
+                        activeURLs={["login", "signup"]}
                      />
                   </>
                )}
@@ -75,12 +81,23 @@ type NavBarItemProps = {
    icon: string;
    to: string;
    name: string;
+   activeURLs?: string[];
 };
 
-function NavBarItem({ icon, to, name }: NavBarItemProps) {
+function NavBarItem({ icon, to, name, activeURLs }: NavBarItemProps) {
+   const { pathname } = useLocation();
+
+   let buttonColor: "gray" | undefined = "gray";
+   if (activeURLs && activeURLs.includes(pathname)) buttonColor = undefined;
+   else if (pathname === to) buttonColor = undefined;
+
    return (
       <NavLink {...{ to }}>
-         <Button color="gray" variant="soft" className="!block !h-auto !p-2">
+         <Button
+            color={buttonColor}
+            variant="soft"
+            className="!block !h-auto !p-2"
+         >
             <div className="flex gap-2 items-center flex-nowrap">
                <i className={`text-xl pi ${icon}`} />
                <span className="text-sm text-nowrap">{name}</span>

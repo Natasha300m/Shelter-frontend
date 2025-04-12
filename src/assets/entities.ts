@@ -36,3 +36,36 @@ type NewsItem = {
    content: string; //markdown
    shelterID: number;
 };
+
+// // AUTH:
+// /api/login - POST
+// /api/registartion - POST
+// /api/currentAccount - GET
+// api/deleteAccount - DELETE
+
+// // POSTS:
+// /api/posts - GET & POST
+type PostRequestParams = {
+   page?: number;
+   petType?: "Dog" | "Cat" | "Neither"; // "Neither" will show pets other than cats and dogs
+   petAge?: "1-" | "1+" | "2+" | "4+";
+   needs?: "Owner" | "Shelter" | "Rescue";
+   shelterID?: number; // Show posts from a specific shelter
+   volunteers?: "true" | "false"; //Show posts only from volunteers
+};
+// Use case example:
+// /api/posts?petType=Dog&needs=Owner
+// /api/posts?shelterID=3
+// /api/posts?petType=Cat&volunteers=true
+
+// /api/posts/1 GET & PUT & DELETE
+
+
+// // NEWS_ITEMS:
+// /api/newsItems - GET & POST
+// /api/newsItems/1 GET & PUT & DELETE
+
+
+// // SHELTERS:
+// /api/shelter POST
+// /api/shelter/1 GET & DELETE

@@ -1,5 +1,5 @@
 function ShelterPage() {
-   return <section className="containerX"></section>;
+   return <section className="containerX">Shelter</section>;
 }
 
 export { ShelterPage };

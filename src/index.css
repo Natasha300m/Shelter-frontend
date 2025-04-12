@@ -80,3 +80,10 @@ small {
 .containerX {
    @apply container mx-auto px-4;
 }
+
+/* Custom classes */
+
+.grid325px1fr {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(325px, 1fr));
+}

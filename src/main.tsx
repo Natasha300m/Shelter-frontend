@@ -8,7 +8,7 @@ function App() {
    return (
       <Theme
          appearance="dark"
-         accentColor="purple"
+         accentColor="crimson"
          radius="medium"
          panelBackground="translucent"
       >

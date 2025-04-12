@@ -1,15 +1,17 @@
 import { Separator } from "@radix-ui/themes";
-import { PostCard } from "./PostCard";
 import { PropsWithChildren } from "react";
 
-export function ShelterGroup({ children }: PropsWithChildren) {
+export function ShelterGroup({
+   children,
+   title
+}: PropsWithChildren & { title?: string }) {
    return (
-      <div>
+      <div className="w-full">
          <div className="flex gap-2 items-center">
-            <h2>Приют київських бобрів</h2>
+            <h2>{title || "Приют київських бобрів"}</h2>
             <Separator className="!grow" />
          </div>
-         <div className="grid grid-cols-5 p-4 gap-4">{children}</div>
+         <div className="grid325px1fr gap-4 p-4">{children}</div>
       </div>
    );
 }
