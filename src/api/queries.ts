@@ -1,6 +1,6 @@
-import { collection, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db, userRef } from "../global/config/firebase";
-import { Shelter, User } from "./mutations";
+import { Post, Shelter, User } from "./mutations";
 
 const APIGetUser = (id: string) => async () => {
    try {
@@ -28,9 +28,39 @@ const APIGetAllShelters = async (): Promise<Shelter[]> => {
    }
 };
 
-const APIGetShelter = async () => {};
+const APIGetShelter = (id: string) => async () => {
+   try {
+      const docRef = doc(db, "shelters", id);
+      const docSnap = await getDoc(docRef);
 
-const APIGetAllPosts = async () => {};
+      if (docSnap.exists()) {
+         return {
+            id: docSnap.id,
+            ...docSnap.data()
+         } as Shelter;
+      } else {
+         console.log(`No shelter found with id: ${id}`);
+         return null;
+      }
+   } catch (err) {
+      console.log("Failed to get shelter:", err);
+      return null;
+   }
+};
+
+const APIGetAllPosts = async () => {
+   try {
+      const snapshot = await getDocs(collection(db, "posts"));
+      const posts: Post[] = snapshot.docs.map((doc) => ({
+         id: doc.id,
+         ...doc.data()
+      })) as Post[];
+      return posts;
+   } catch (err) {
+      console.log("Failed to get posts:", err);
+      return [];
+   }
+};
 
 const APIGetAllNewsItems = async () => {};
 

@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import clsx from "clsx";
 import { APICreateShelter, APIUpdateUser } from "../../../api/mutations";
 
 import { v4 } from "uuid";
@@ -39,8 +38,7 @@ function Manager() {
    const {
       register,
       handleSubmit,
-      formState: { errors },
-      getValues
+      formState: { errors }
    } = useForm<ManagerFormData>({ resolver: yupResolver(managerSchema) });
 
    const [isPreview, setIsPreview] = useState(false);
@@ -140,7 +138,7 @@ function Manager() {
                         Контактна інформація{" "}
                         <Modal
                            trigger={
-                              <Button variant="ghost">
+                              <Button variant="ghost" type="button">
                                  (Markdown <i className="pi pi-info-circle" /> )
                               </Button>
                            }
@@ -163,7 +161,7 @@ function Manager() {
                      }}
                      type="button"
                   >
-                     {!isPreview ? "Превью" : "Редагувати"}
+                     {!isPreview ? "Превʼю" : "Редагувати"}
                   </Button>
 
                   <Button type="submit">Підтвердити</Button>

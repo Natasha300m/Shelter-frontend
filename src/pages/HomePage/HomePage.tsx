@@ -1,81 +1,131 @@
-import { Button } from "@radix-ui/themes";
+import { Button, Separator, Spinner } from "@radix-ui/themes";
 import { PostCard } from "./PostCard";
 import { ShelterGroup } from "./ShelterGroup";
+import { useQuery } from "@tanstack/react-query";
+import { queryKeys } from "../../global/config/queryKeys";
+import { APIGetAllPosts, APIGetAllShelters } from "../../api/queries";
+import { PropsWithChildren, useMemo, useState } from "react";
 
 function HomePage() {
+   const [petType, setPetType] = useState("");
+   const [petAge, setPetAge] = useState("");
+   const [needs] = useState("");
+
+   const { data: posts, isPending: isPostsFetching } = useQuery({
+      queryKey: queryKeys.posts,
+      queryFn: APIGetAllPosts
+   });
+
+   const dispalyPosts = useMemo(
+      () =>
+         posts?.filter((post) => {
+            if (petType) {
+               if (post.petType !== petType) return false;
+            }
+            if (petAge) {
+               if (post.petAge !== petAge) return false;
+            }
+            if (petAge) {
+               if (post.petAge !== petAge) return false;
+            }
+            return true;
+         }),
+      [posts, petAge, petType, needs]
+   );
+
+   const { data: shelters, isPending: isSheltersFetching } = useQuery({
+      queryKey: queryKeys.shelters,
+      queryFn: APIGetAllShelters
+   });
+
+   const isFetching = isPostsFetching || isSheltersFetching;
+   console.log(posts);
+
    return (
       <>
          <div className="containerX flex gap-8 pt-8 flex-col md:flex-row">
             <section className="grow order-2 md:order-1 shrink-0 space-y-4">
-               <ShelterGroup>
-                  <PostCard
-                     title="Пес коргі"
-                     imageURLs={[
-                        "https://i.pinimg.com/736x/86/66/00/866600bad20c99547bb03420a18d4b67.jpg"
-                     ]}
-                     description="Слухняній пес, знає команди вміє стрибати"
-                  />
-
-                  <PostCard
-                     title="Піца Маззерати"
-                     imageURLs={[
-                        "https://i.pinimg.com/736x/6e/57/54/6e5754af335ed10df3b08b136ec67457.jpg"
-                     ]}
-                     description="Слухняній пес, знає команди вміє стрибати"
-                  />
-               </ShelterGroup>
-               <ShelterGroup title="Львівський приют ім. Зеленського">
-                  <PostCard
-                     title="Пес коргі"
-                     imageURLs={[
-                        "https://i.pinimg.com/736x/ac/5a/30/ac5a300b8191e0895e32f501fec49d9f.jpg"
-                     ]}
-                     description="Слухняній пес, знає команди вміє стрибати"
-                  />
-
-                  <PostCard
-                     title="Піца Маззерати"
-                     imageURLs={[
-                        "https://i.pinimg.com/736x/e8/20/8f/e8208f9ebe2338d55dd4bbaf92ddac3f.jpg"
-                     ]}
-                     description="Слухняній пес, знає команди вміє стрибати"
-                  />
-
-                  <PostCard
-                     title="Гібон"
-                     imageURLs={[
-                        "https://i.pinimg.com/736x/41/ce/b7/41ceb7bdeb4b8cdbd4ba81816ed80cdf.jpg"
-                     ]}
-                     description="Слухняній пес, знає команди вміє стрибати"
-                  />
-               </ShelterGroup>
-               <ShelterGroup title="Пости волонтерів: ">
-                  <PostCard
-                     title="Хочю піцци"
-                     imageURLs={[
-                        "https://i.pinimg.com/736x/ac/5a/30/ac5a300b8191e0895e32f501fec49d9f.jpg"
-                     ]}
-                     description="Слухняній пес, знає команди вміє стрибати"
-                  />
-               </ShelterGroup>
+               {isFetching && <Spinner size="3" className="!scale-150" />}
+               {!isFetching && shelters && dispalyPosts && (
+                  <>
+                     {shelters.map((shelter) => (
+                        <ShelterGroup {...shelter} posts={dispalyPosts} />
+                     ))}
+                     <div className="w-full">
+                        <div className="flex gap-2 items-center">
+                           <h2>Обвʼяви волонтерів</h2>
+                           <Separator className="!grow" />
+                        </div>
+                        <div className="grid325px1fr gap-4 p-4">
+                           {dispalyPosts.map((post) => {
+                              if (post.authorRole === "VOLUNTEER")
+                                 return <PostCard {...post} />;
+                              return <></>;
+                           })}
+                        </div>
+                     </div>
+                  </>
+               )}
             </section>
             <section className="w-[250px] grow-0 shrink-0 order-1 md:order-2">
                <h2 className="text-xl">Фільтри пошуку:</h2>
                <div className="mt-2">
                   <h3>Тварина:</h3>
                   <div className="flex gap-2 flex-wrap mt-1">
-                     <Button variant="outline">Песик</Button>
-                     <Button variant="outline">Котик</Button>
-                     <Button variant="outline">Інше</Button>
+                     <ToggleButton
+                        value="Пес"
+                        state={petType}
+                        setState={setPetType}
+                     >
+                        Песик
+                     </ToggleButton>
+                     <ToggleButton
+                        value="Кіт"
+                        state={petType}
+                        setState={setPetType}
+                     >
+                        Кіт
+                     </ToggleButton>
+                     <ToggleButton
+                        value="Інше"
+                        state={petType}
+                        setState={setPetType}
+                     >
+                        Інше
+                     </ToggleButton>
                   </div>
                </div>
                <div className="mt-2">
                   <h3>Вік:</h3>
                   <div className="flex gap-2 flex-wrap mt-1">
-                     <Button variant="outline">Менше року</Button>
-                     <Button variant="outline">Від року</Button>
-                     <Button variant="outline">Від 2х років</Button>
-                     <Button variant="outline">Від 3х років</Button>
+                     <ToggleButton
+                        value="less1"
+                        state={petAge}
+                        setState={setPetAge}
+                     >
+                        Менше року
+                     </ToggleButton>
+                     <ToggleButton
+                        value="more1"
+                        state={petAge}
+                        setState={setPetAge}
+                     >
+                        Від 1 року
+                     </ToggleButton>
+                     <ToggleButton
+                        value="more2"
+                        state={petAge}
+                        setState={setPetAge}
+                     >
+                        Від 2х років
+                     </ToggleButton>
+                     <ToggleButton
+                        value="more4"
+                        state={petAge}
+                        setState={setPetAge}
+                     >
+                        Від 4х років
+                     </ToggleButton>
                   </div>
                </div>
 
@@ -90,6 +140,28 @@ function HomePage() {
             </section>
          </div>
       </>
+   );
+}
+
+type ToggleButtonProps = {
+   state: string;
+   setState: (a: string) => void;
+   value: string;
+};
+
+function ToggleButton({
+   state,
+   setState,
+   value,
+   children
+}: ToggleButtonProps & PropsWithChildren) {
+   return (
+      <Button
+         variant={state === value ? "solid" : "outline"}
+         onClick={() => setState(value)}
+      >
+         {children}
+      </Button>
    );
 }
 

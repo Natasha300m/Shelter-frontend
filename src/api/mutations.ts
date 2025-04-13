@@ -1,7 +1,7 @@
 // USERS
 
 import { setDoc, updateDoc } from "firebase/firestore";
-import { shelterRef, userRef } from "../global/config/firebase";
+import { postRef, shelterRef, userRef } from "../global/config/firebase";
 
 type User = {
    id: string;
@@ -54,21 +54,28 @@ const APICreateShelter = async (shelter: Shelter) => {
 
 type Post = {
    id: string;
-   imageURL: string;
+   imageURL?: string;
    title: string;
-   description: string; // markdown
+   description?: string; // markdown
 
-   petType: "Кіт" | "Пес" | string;
-   petAge: "less1" | "more1" | "more2" | "more4";
+   petType: string;
+   petAge: string;
 
-   needs: "Owner" | "Shelter" | "Rescue"; //interface display: "Шукаємо власника", "Шукаємо притулок", "Шукаємо загубленого улюбленця"
+   needs: string; //interface display: "Шукаємо власника", "Шукаємо притулок", "Шукаємо загубленого улюбленця"
 
    authorRole: "VOLUNTEER" | "MANAGER";
-   shelterID?: number; // required for manager
-   userID?: number; // required for volunteer
+   shelterID?: string; // required for manager
+   userID?: string; // required for volunteer
 };
 
-const APICreatePost = async () => {};
+const APICreatePost = async (post: Post) => {
+   try {
+      await setDoc(postRef(post.id), post);
+      return post.id;
+   } catch (err) {
+      console.log("Failed to create shelter:", err);
+   }
+};
 const APIUpdatePost = async () => {};
 
 // News

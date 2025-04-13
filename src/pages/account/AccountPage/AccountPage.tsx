@@ -55,7 +55,7 @@ function AccountPageContent({ userData }: { userData: User }) {
       <section className="containerX pt-10 md:pt-20">
          <div className="max-w-[600px] mx-auto">
             <h1 className="text-center">Особистий кабінет</h1>
-            <div className="flex flex-col md:flex-row gap-4 justify-center mt-4">
+            <div className="flex flex-col items-center md:items-start md:flex-row gap-4 justify-center mt-4">
                <Avatar
                   size="9"
                   fallback={userData.name[0]}

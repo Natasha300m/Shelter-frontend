@@ -63,7 +63,7 @@ function Volunteer() {
                Ваша контактна інформація{" "}
                <Modal
                   trigger={
-                     <Button variant="ghost">
+                     <Button variant="ghost" type="button">
                         (Markdown <i className="pi pi-info-circle" /> )
                      </Button>
                   }
@@ -99,7 +99,7 @@ function Volunteer() {
                }}
                type="button"
             >
-               {!isPreview ? "Превью" : "Редагувати"}
+               {!isPreview ? "Превʼю" : "Редагувати"}
             </Button>
             <Button loading={isPending} type="submit">
                Підтвердити
