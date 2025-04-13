@@ -16,12 +16,12 @@ type Shelter = {
 
 type Post = {
    id: number;
-   imageURLs: string[];
+   imageURL: string;
    title: string;
    description: string; // markdown
 
    petType: "Cat" | "Dog" | string;
-   petAge: "1-" | "1+" | "2+" | "4+";
+   petAge: "less1" | "more1" | "more2" | "more4";
 
    needs: "Owner" | "Shelter" | "Rescue"; //interface display: "Шукаємо власника", "Шукаємо притулок", "Шукаємо загубленого улюбленця"
 
@@ -60,11 +60,9 @@ type PostRequestParams = {
 
 // /api/posts/1 GET & PUT & DELETE
 
-
 // // NEWS_ITEMS:
 // /api/newsItems - GET & POST
 // /api/newsItems/1 GET & PUT & DELETE
-
 
 // // SHELTERS:
 // /api/shelter POST
