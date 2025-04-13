@@ -22,5 +22,6 @@ const storage = getStorage(app);
 const auth = getAuth(app);
 
 const userRef = (id: string) => doc(db, "users", id);
+const shelterRef = (id: string) => doc(db, "shelters", id);
 
-export { db, storage, auth, userRef };
+export { db, storage, auth, userRef, shelterRef };

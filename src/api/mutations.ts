@@ -1,7 +1,7 @@
 // USERS
 
-import { setDoc } from "firebase/firestore";
-import { userRef } from "../global/config/firebase";
+import { setDoc, updateDoc } from "firebase/firestore";
+import { shelterRef, userRef } from "../global/config/firebase";
 
 type User = {
    id: string;
@@ -9,7 +9,7 @@ type User = {
    email: string;
    photoURL: string;
    role?: "VOLUNTEER" | "MANAGER";
-   shelterID?: number; // required for manager
+   shelterID?: string; // required for manager
    contacts?: string; // markdown required for volunteer
 };
 
@@ -18,11 +18,19 @@ const APICreateUser = async (user: User) => {
       await setDoc(userRef(user.id), user);
       return user.id;
    } catch (err) {
-      console.log(err);
+      console.log("Failed to create user:", err);
    }
 };
 
-const APIUpdateUser = async () => {};
+const APIUpdateUser = async (partialUser: Partial<User> & { id: string }) => {
+   try {
+      const { id, ...updateFields } = partialUser;
+      await updateDoc(userRef(id), updateFields);
+      return id;
+   } catch (err) {
+      console.log("Failed to update user:", err);
+   }
+};
 
 // SHELTERS
 
@@ -33,7 +41,14 @@ type Shelter = {
    contacts: string; // markdown
 };
 
-const APICreateShelter = async () => {};
+const APICreateShelter = async (shelter: Shelter) => {
+   try {
+      await setDoc(shelterRef(shelter.id), shelter);
+      return shelter.id;
+   } catch (err) {
+      console.log("Failed to create shelter:", err);
+   }
+};
 
 // Posts
 
@@ -43,7 +58,7 @@ type Post = {
    title: string;
    description: string; // markdown
 
-   petType: "Cat" | "Dog" | string;
+   petType: "Кіт" | "Пес" | string;
    petAge: "less1" | "more1" | "more2" | "more4";
 
    needs: "Owner" | "Shelter" | "Rescue"; //interface display: "Шукаємо власника", "Шукаємо притулок", "Шукаємо загубленого улюбленця"

@@ -21,7 +21,7 @@ function LoginPage() {
    });
 
    return (
-      <section className="containerX pt-10 md:pt-20">
+      <section className="containerX pt-20 md:pt-40">
          <h1 className="containerX text-center">
             Ласкаво просимо до <b className="text-(--accent-10)">Baratie</b>
          </h1>
