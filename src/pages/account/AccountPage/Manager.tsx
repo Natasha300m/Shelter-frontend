@@ -1,5 +1,5 @@
 import { Button, Select, Spinner, TextArea, TextField } from "@radix-ui/themes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -82,6 +82,11 @@ function Manager() {
       queryKey: queryKeys.shelters,
       queryFn: APIGetAllShelters
    });
+
+   useEffect(() => {
+      if (!currentUser?.data?.shelterID && shelters)
+         setShelterId(shelters[0].id);
+   }, [currentUser?.data?.shelterID, shelters]);
 
    return (
       <>
@@ -171,9 +176,11 @@ function Manager() {
 
          {shelterId !== "zxc" && (
             <div className="flex justify-center mt-4">
-               <Button onClick={() => mutate()} loading={isPending}>
-                  Підтвердити
-               </Button>
+               {!currentUser?.data?.role && (
+                  <Button onClick={() => mutate()} loading={isPending}>
+                     Підтвердити
+                  </Button>
+               )}
             </div>
          )}
       </>

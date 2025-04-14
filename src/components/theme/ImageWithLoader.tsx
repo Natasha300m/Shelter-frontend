@@ -22,7 +22,7 @@ const ImageWithLoader = ({ src }: ImageWithLoaderProps) => {
          <img
             src={src}
             onLoad={handleLoad}
-            className={`object-cover h-full w-full transition ${
+            className={`object-cover h-full w-full transition rounded-lg ${
                isLoaded ? "opacity-100" : "opacity-0"
             }`}
          />

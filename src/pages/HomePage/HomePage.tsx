@@ -45,7 +45,11 @@ function HomePage() {
       <>
          <div className="containerX flex gap-8 pt-8 flex-col md:flex-row">
             <section className="grow order-2 md:order-1 shrink-0 space-y-4">
-               {isFetching && <Spinner size="3" className="!scale-150" />}
+               {isFetching && (
+                  <div className="flex justify-center mt-8">
+                     <Spinner size="3" className="!scale-150" />
+                  </div>
+               )}
                {!isFetching && shelters && dispalyPosts && (
                   <>
                      {shelters.map((shelter) => (
@@ -53,7 +57,7 @@ function HomePage() {
                      ))}
                      <div className="w-full">
                         <div className="flex gap-2 items-center">
-                           <h2>Обвʼяви волонтерів</h2>
+                           <h3>Обвʼяви волонтерів</h3>
                            <Separator className="!grow" />
                         </div>
                         <div className="grid325px1fr gap-4 p-4">

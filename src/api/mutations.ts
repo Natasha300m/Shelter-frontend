@@ -1,6 +1,6 @@
 // USERS
 
-import { setDoc, updateDoc } from "firebase/firestore";
+import { deleteDoc, setDoc, updateDoc } from "firebase/firestore";
 import { postRef, shelterRef, userRef } from "../global/config/firebase";
 
 type User = {
@@ -78,6 +78,15 @@ const APICreatePost = async (post: Post) => {
 };
 const APIUpdatePost = async () => {};
 
+const APIDeletePost = async (id: string) => {
+   try {
+      await deleteDoc(postRef(id));
+      return id;
+   } catch (err) {
+      console.log("Failed to create shelter:", err);
+   }
+};
+
 // News
 
 type NewsItem = {
@@ -95,7 +104,8 @@ export {
    APICreateShelter,
    APICreatePost,
    APIUpdatePost,
-   APICreateNewsItem
+   APICreateNewsItem,
+   APIDeletePost
 };
 
 export type { User, Shelter, Post, NewsItem };

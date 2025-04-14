@@ -1,15 +1,26 @@
-import { Button, Card, ScrollArea, Separator, Spinner } from "@radix-ui/themes";
+import { Button, Card, ScrollArea, Spinner } from "@radix-ui/themes";
 import { ImageWithLoader } from "../../components/theme/ImageWithLoader";
 import { Modal } from "../../components/theme/Modal";
-import { Post } from "../../api/mutations";
+import { APIDeletePost, Post } from "../../api/mutations";
 import Markdown from "react-markdown";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "../../global/config/queryKeys";
 import { APIGetShelter, APIGetUser } from "../../api/queries";
+import { Link } from "react-router";
+import { routes } from "../../global/config/routes";
+
+import removeMarkdown from "markdown-to-text";
+import { MarkdownBox } from "../../components/MarkdownBox";
+import { MessageForm } from "../../components/MessageForm";
+import { Popup } from "../../components/theme/Popup";
+import toast from "react-hot-toast";
+import { useAtomValue } from "jotai";
+import { currentUserAtom } from "../../store/atoms";
+import { useMemo } from "react";
 
 export function PostCard(post: Post) {
    const displayDesription = post.description
-      ? post.description.slice(0, 40) + "..."
+      ? removeMarkdown(post.description.slice(0, 40)) + "..."
       : undefined;
 
    const renderAge = () => {
@@ -18,62 +29,135 @@ export function PostCard(post: Post) {
       if (post.petAge === "more2") return "Більше 2х років";
       if (post.petAge === "more4") return "Більше 4х років";
    };
+
+   const renderNeed = () => {
+      if (post.needs === "owner") return "Нового хозяїна";
+      if (post.needs === "shelter") return "Притулок";
+      if (post.needs === "rescue") return "Порятунку";
+   };
+
+   const currentUser = useAtomValue(currentUserAtom);
+
+   const isDeletable = useMemo(() => {
+      if (!currentUser) return false;
+      if (currentUser.data?.shelterID === post.shelterID) return true;
+      if (currentUser.data?.id === post.userID) return true;
+   }, [post, currentUser]);
+
+   const queryClient = useQueryClient();
+   const { mutate: deletePost, isPending: isDeletingPost } = useMutation({
+      mutationFn: APIDeletePost,
+      onSuccess: () => {
+         queryClient.invalidateQueries({ queryKey: queryKeys.posts });
+      }
+   });
+
    return (
-      <Card>
-         <div className="grid gap-2 grid-cols-[2fr_1fr]">
-            <div>
+      <Card className="!flex !flex-col">
+         <div className="flex gap-2 grow">
+            <div className="grow">
                <h3>{post?.title}</h3>
 
-               <p className="text-(--gray-10)">Вік: більше року</p>
+               <p className="text-(--gray-10)">Потребує: {renderNeed()}</p>
                <p className="text-(--gray-10)">{displayDesription}</p>
             </div>
-            {post.imageURL && (
-               <div className="w-25 aspect-square mt-2">
+            {post.imageURL ? (
+               <div className="w-30 h-30 aspect-square shrink-0">
                   <ImageWithLoader src={post.imageURL} />
+               </div>
+            ) : (
+               <div className="w-30 h-30 aspect-square shrink-0 opacity-60">
+                  <ImageWithLoader src="https://i.pinimg.com/736x/55/b2/7b/55b27bbd5670a64a82ebde947095ac0a.jpg" />
                </div>
             )}
          </div>
-
-         <Modal
-            trigger={
-               <div className="mt-3 flex gap-2">
-                  {post.needs === "owner" && <Button>Стати хозяїном</Button>}
-                  {post.needs === "shelter" && <Button>Деталі</Button>}
-                  {post.needs === "rescue" && <Button>Допомогти</Button>}
-                  <Button variant="soft">Деталі</Button>
-               </div>
-            }
-            content={
-               <>
+         <div className="mt-3 flex gap-2 flex-row-reverse">
+            <Modal
+               trigger={
                   <div className="flex gap-2">
-                     <div>
-                        {post.imageURL && (
-                           <div className="w-40 aspect-square">
-                              <ImageWithLoader src={post.imageURL} />
+                     {post.needs === "owner" && <Button>Стати хозяїном</Button>}
+                     {post.needs === "shelter" && <Button>Деталі</Button>}
+                     {post.needs === "rescue" && <Button>Допомогти</Button>}
+                     <Button variant="soft">Деталі</Button>
+                  </div>
+               }
+               content={
+                  <>
+                     <div className="flex gap-4">
+                        <div>
+                           {post.imageURL ? (
+                              <div className="w-40 aspect-square">
+                                 <ImageWithLoader src={post.imageURL} />
+                              </div>
+                           ) : (
+                              <div className="w-40 h-40 bg-red-100 opacity-60">
+                                 <ImageWithLoader src="https://i.pinimg.com/736x/55/b2/7b/55b27bbd5670a64a82ebde947095ac0a.jpg" />
+                              </div>
+                           )}
+                        </div>
+                        <div>
+                           <h3>{post.title}</h3>
+                           <div className="text-(--gray-10)">
+                              <p>Вік: {renderAge()}</p>
+                              <p>Вид: {post.petType}</p>
+                              <p>Потребує: {renderNeed()}</p>
                            </div>
-                        )}
-                        <h3 className="mt-2">{post.title}</h3>
-                     </div>
-                     <div>
-                        <ScrollArea className="!h-40">
-                           <Markdown>{post.description}</Markdown>
-                        </ScrollArea>
-                        <div className="text-(--gray-10)">
-                           <p>Вік: {renderAge()}</p>
-                           <p>Вид: {post.petType}</p>
                         </div>
                      </div>
+                     {post.description && (
+                        <div className="mt-2 p-2">
+                           <p className="text-(--gray-10)">Опис</p>
+                           <ScrollArea className="!h-40">
+                              <Markdown>{post.description}</Markdown>
+                           </ScrollArea>
+                        </div>
+                     )}
+                     {post.userID && <AuthorDetails userID={post.userID} />}
+                     {post.shelterID && (
+                        <ShelterDetails shelterID={post.shelterID} />
+                     )}
+                  </>
+               }
+            />
+            <Popup
+               trigger={
+                  <Button
+                     variant="soft"
+                     color="gray"
+                     className="!px-1 !mr-auto !opacity-80"
+                  >
+                     <i className="pi pi-ellipsis-v" />
+                  </Button>
+               }
+               content={
+                  <div className="-m-1 flex flex-col gap-2">
+                     <Button
+                        className="!flex !gap-2 !w-full !justify-between"
+                        variant="ghost"
+                        color="gray"
+                        onClick={() => {
+                           toast.success("Скаргу успішно надіслано");
+                        }}
+                     >
+                        <span>Поскаржитися</span>
+                        <i className="pi pi-flag-fill" />
+                     </Button>
+                     {isDeletable && (
+                        <Button
+                           onClick={() => deletePost(post.id)}
+                           className="!flex !gap-2 !w-full !justify-between"
+                           variant="ghost"
+                           color="red"
+                           loading={isDeletingPost}
+                        >
+                           <span>Видалити</span>
+                           <i className="pi pi-trash" />
+                        </Button>
+                     )}
                   </div>
-                  <div>
-                     <Separator className="!w-full !my-2" />
-                  </div>
-                  {post.userID && <AuthorDetails userID={post.userID} />}
-                  {post.shelterID && (
-                     <ShelterDetails shelterID={post.shelterID} />
-                  )}
-               </>
-            }
-         />
+               }
+            />
+         </div>
       </Card>
    );
 }
@@ -85,16 +169,16 @@ function AuthorDetails({ userID }: { userID: string }) {
    });
    if (isPending)
       return (
-         <div>
+         <div className="flex justify-center mt-4">
             <Spinner size="3" />
          </div>
       );
    if (data)
       return (
-         <div className="mt-4">
-            <p className="mb-2">Контактна інформація волонтера:</p>
-            <Markdown>{data?.contacts}</Markdown>
-         </div>
+         <MarkdownBox
+            title="Контактна інформація волонтера"
+            text={data.contacts || ""}
+         />
       );
 }
 
@@ -106,18 +190,28 @@ function ShelterDetails({ shelterID }: { shelterID: string }) {
 
    if (isPending)
       return (
-         <div>
+         <div className="flex justify-center mt-4">
             <Spinner size="3" />
          </div>
       );
    if (data)
       return (
          <div className="mt-2">
-            <div className="flex gap-2 text-(--gray-10)">
-               <p>{data.name}</p>
-               <p>Місто: {data.location}</p>
+            <MarkdownBox
+               title={`${data.name} м. ${data.location}`}
+               text={data?.contacts}
+            />
+            <div className="flex mt-2 gap-2 justify-end">
+               <Link to={routes.toShelter(data.id)}>
+                  <Button variant="soft" color="gray">
+                     Перейти до притулку
+                  </Button>
+               </Link>
+               <Modal
+                  trigger={<Button variant="soft">Написати в притулок</Button>}
+                  content={<MessageForm shelter={data} />}
+               />
             </div>
-            <Markdown>{data?.contacts}</Markdown>
          </div>
       );
 }

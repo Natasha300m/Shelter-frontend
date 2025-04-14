@@ -15,7 +15,7 @@ const routes = {
    createNewsItem: "/create/newsItem",
 
    shelter: "/shelter/:id",
-   toShelter: (id: number) => `/shelter/${id}`
+   toShelter: (id: string) => `/shelter/${id}`
 };
 
 export { routes };

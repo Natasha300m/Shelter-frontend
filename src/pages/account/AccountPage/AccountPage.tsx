@@ -45,10 +45,13 @@ function AccountPageContent({ userData }: { userData: User }) {
       userData?.role ? userData?.role : undefined
    );
 
+   const setCurrentUser = useSetAtom(currentUserAtom);
+
    const setCurrentUserId = useSetAtom(currentUserIdAtom);
 
    const handleLogOut = () => {
       setCurrentUserId("");
+      setCurrentUser({ data: undefined, isPending: false });
    };
 
    return (
@@ -96,23 +99,19 @@ function AccountPageContent({ userData }: { userData: User }) {
                            <div>
                               <h3>Волонтер:</h3>
                               <p>
-                                 Lorem ipsum dolor sit, amet consectetur
-                                 adipisicing elit. Neque doloribus molestias
-                                 vitae repudiandae nobis exercitationem dolor
-                                 consectetur illum? Architecto quo aperiam
-                                 perferendis distinctio asperiores repudiandae
-                                 laboriosam expedita, veniam quos perspiciatis.
-                                 Ex sint aspernatur qui optio eligendi molestias
-                                 esse beatae ab.
+                                 - Створюйте публічні обʼяви від свого обличчя
                               </p>
                               <Separator className="!w-full !my-2" />
                               <h3>Менеджер Притулку:</h3>
                               <p>
-                                 Lorem, ipsum dolor sit amet consectetur
-                                 adipisicing elit. Vitae, iusto nam. Labore
-                                 fugiat rerum asperiores mollitia similique rem,
-                                 debitis quasi minus veniam atque neque natus
-                                 aspernatur eveniet magni earum. Magni.
+                                 - Створіть новий притулок чи додайте до вже
+                                 існуючого
+                              </p>
+                              <p>- Додавайте обʼяви до обраного притулку</p>
+                              <p>- Діліться новинами з притулку</p>
+                              <p>
+                                 - Отримуйте повідомлення від інших волонтерів
+                                 стосовно анкет
                               </p>
                            </div>
                         }

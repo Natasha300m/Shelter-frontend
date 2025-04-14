@@ -7,6 +7,7 @@ import { LoginPage } from "../pages/account/LoginPage/LoginPage";
 import { AccountPage } from "../pages/account/AccountPage/AccountPage";
 import { NewsPage } from "../pages/NewsPage/NewsPage";
 import { CreateNewsItemPage } from "../pages/CreateNewsItemPage/CreateNewsItemPage";
+import { ShelterPage } from "../pages/ShelterPage/ShelterPage";
 function AppRouter() {
    return (
       <>
@@ -24,7 +25,7 @@ function AppRouter() {
                      element={<CreateNewsItemPage />}
                   />
 
-                  <Route path={routes.shelter} element />
+                  <Route path={routes.shelter} element={<ShelterPage />} />
 
                   {/* Auth */}
                   <Route path={routes.login} element={<LoginPage />} />
