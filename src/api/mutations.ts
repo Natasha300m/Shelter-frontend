@@ -1,7 +1,12 @@
 // USERS
 
 import { deleteDoc, setDoc, updateDoc } from "firebase/firestore";
-import { postRef, shelterRef, userRef } from "../global/config/firebase";
+import {
+   newsItemRef,
+   postRef,
+   shelterRef,
+   userRef
+} from "../global/config/firebase";
 
 type User = {
    id: string;
@@ -92,11 +97,18 @@ const APIDeletePost = async (id: string) => {
 type NewsItem = {
    id: string;
    title: string;
-   content: string; //markdown
-   shelterID: number;
+   content?: string;
+   shelterID?: string;
 };
 
-const APICreateNewsItem = async () => {};
+const APICreateNewsItem = async (newsItem: NewsItem) => {
+   try {
+      await setDoc(newsItemRef(newsItem.id), newsItem);
+      return newsItem.id;
+   } catch (err) {
+      console.log("Failed to create shelter:", err);
+   }
+};
 
 export {
    APICreateUser,

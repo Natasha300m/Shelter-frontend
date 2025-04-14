@@ -5,7 +5,7 @@ import {
    TextArea,
    TextField
 } from "@radix-ui/themes";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import * as yup from "yup";
 import { FilePicker } from "../../components/theme/FilePicker";
 import { ErrorText } from "../../components/ErrorText";
@@ -19,6 +19,7 @@ import { uploadPetImage } from "../../global/config/firebase";
 import toast from "react-hot-toast";
 import { Modal } from "../../components/theme/Modal";
 import { MardownGuide } from "../../components/MardownGuide";
+import { PostDetails } from "../HomePage/PostDetails";
 
 const postSchema = yup.object({
    title: yup.string().required("Вкажіть назву обʼяви"),
@@ -35,16 +36,25 @@ function CreatePostPage() {
 
    const [image, setImage] = useState<File | null>(null);
 
+   const imageSrcCopy = useMemo(
+      () => (image ? URL.createObjectURL(image) : null),
+      [image]
+   );
+
    const {
       register,
       handleSubmit,
-      formState: { errors }
+      formState: { errors },
+      watch
    } = useForm<PostFormData>({
       resolver: yupResolver(postSchema),
       defaultValues: {}
    });
 
-   const resultPetType = petType !== "Other" ? petType : customPetType;
+   const resultPetType = petType !== "zxc" ? petType : customPetType;
+
+   const previewTitle = watch("title");
+   const previewDescription = watch("description");
 
    const currentUser = useAtomValue(currentUserAtom);
 
@@ -63,15 +73,7 @@ function CreatePostPage() {
       }
 
       const newPostId = v4();
-      console.log({
-         id: newPostId,
-         imageURL: imageURL || undefined,
-         authorRole: currentUser?.data?.role,
-         petAge,
-         petType: resultPetType,
-         needs,
-         ...data
-      });
+      console.log();
       await APICreatePost({
          id: newPostId,
          imageURL: imageURL || "",
@@ -174,14 +176,40 @@ function CreatePostPage() {
                   />
                </p>
                <TextArea
+                  className="!h-40 !overflow-y-scroll"
                   placeholder="# Необовʼязково*"
                   {...register("description")}
                />
             </label>
             <div className="flex justify-end gap-2">
-               <Button variant="soft" color="gray" type="button">
-                  Превʼю
-               </Button>
+               {currentUser?.data?.role && (
+                  <Modal
+                     trigger={
+                        <Button variant="soft" color="gray" type="button">
+                           Превʼю
+                        </Button>
+                     }
+                     content={
+                        <PostDetails
+                           post={{
+                              id: "oleg",
+                              imageURL: imageSrcCopy || undefined,
+                              authorRole: currentUser?.data?.role || petAge,
+                              petType: resultPetType,
+                              petAge,
+                              needs,
+                              title: previewTitle,
+                              description: previewDescription,
+                              shelterID: currentUser.data.shelterID || "",
+                              userID: currentUser.data.shelterID
+                                 ? ""
+                                 : currentUser.data.id
+                           }}
+                        />
+                     }
+                  />
+               )}
+
                <Button>Створити обʼяву</Button>
             </div>
          </form>

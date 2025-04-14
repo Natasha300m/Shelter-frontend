@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db, userRef } from "../global/config/firebase";
-import { Post, Shelter, User } from "./mutations";
+import { NewsItem, Post, Shelter, User } from "./mutations";
 
 const APIGetUser = (id: string) => async () => {
    try {
@@ -62,7 +62,19 @@ const APIGetAllPosts = async () => {
    }
 };
 
-const APIGetAllNewsItems = async () => {};
+const APIGetAllNewsItems = async () => {
+   try {
+      const snapshot = await getDocs(collection(db, "newsItems"));
+      const shelters: NewsItem[] = snapshot.docs.map((doc) => ({
+         id: doc.id,
+         ...doc.data()
+      })) as NewsItem[];
+      return shelters;
+   } catch (err) {
+      console.log("Failed to get shelters:", err);
+      return [];
+   }
+};
 
 export {
    APIGetUser,

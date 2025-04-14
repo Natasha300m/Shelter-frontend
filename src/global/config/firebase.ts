@@ -31,6 +31,7 @@ const auth = getAuth(app);
 const userRef = (id: string) => doc(db, "users", id);
 const shelterRef = (id: string) => doc(db, "shelters", id);
 const postRef = (id: string) => doc(db, "posts", id);
+const newsItemRef = (id: string) => doc(db, "newsItems", id);
 
 const uploadFile = (folderRef: StorageReference) => async (file: File) => {
    const id = v4();
@@ -48,4 +49,13 @@ const petImagesRef = ref(storage, "petsImages");
 
 const uploadPetImage = uploadFile(petImagesRef);
 
-export { db, storage, auth, userRef, shelterRef, postRef, uploadPetImage };
+export {
+   db,
+   storage,
+   auth,
+   userRef,
+   shelterRef,
+   postRef,
+   uploadPetImage,
+   newsItemRef
+};

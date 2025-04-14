@@ -15,6 +15,8 @@ function Layout() {
       setIsNavClosed((isC) => !isC);
    };
 
+   const currentUser = useAtomValue(currentUserAtom);
+
    return (
       <>
          <main className="mb-24">
@@ -67,11 +69,14 @@ function Layout() {
                                  name="Додати обʼяву"
                                  to={routes.createPost}
                               />
-                              <NavPopupItem
-                                 icon="pi-calendar-plus"
-                                 name="Додати новину"
-                                 to={routes.createNewsItem}
-                              />
+                              {currentUser &&
+                                 currentUser?.data?.role === "MANAGER" && (
+                                    <NavPopupItem
+                                       icon="pi-calendar-plus"
+                                       name="Додати новину"
+                                       to={routes.createNewsItem}
+                                    />
+                                 )}
                            </div>
                         }
                      />

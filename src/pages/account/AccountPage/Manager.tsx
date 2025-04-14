@@ -15,6 +15,8 @@ import { ErrorText } from "../../../components/ErrorText";
 import { Modal } from "../../../components/theme/Modal";
 import { MardownGuide } from "../../../components/MardownGuide";
 import { APIGetAllShelters } from "../../../api/queries";
+import { Link } from "react-router";
+import { routes } from "../../../global/config/routes";
 
 const managerSchema = yup.object({
    name: yup
@@ -176,10 +178,16 @@ function Manager() {
 
          {shelterId !== "zxc" && (
             <div className="flex justify-center mt-4">
-               {!currentUser?.data?.role && (
+               {!currentUser?.data?.role ? (
                   <Button onClick={() => mutate()} loading={isPending}>
                      Підтвердити
                   </Button>
+               ) : (
+                  <Link to={routes.toShelter(currentUser.data.shelterID || "")}>
+                     <Button>
+                        Перейти до притулку <i className="pi pi-arrow-right" />
+                     </Button>
+                  </Link>
                )}
             </div>
          )}
