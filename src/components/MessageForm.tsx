@@ -15,11 +15,9 @@ const messageSchema = yup.object({
 });
 
 function MessageForm({ shelter }: MessageFormProps) {
-   const {
-      register,
-      handleSubmit,
-      formState: { errors }
-   } = useForm<{ content: string }>({ resolver: yupResolver(messageSchema) });
+   const { register } = useForm<{ content: string }>({
+      resolver: yupResolver(messageSchema)
+   });
 
    return (
       <form className="-m-2">

@@ -20,6 +20,8 @@ import toast from "react-hot-toast";
 import { Modal } from "../../components/theme/Modal";
 import { MardownGuide } from "../../components/MardownGuide";
 import { PostDetails } from "../HomePage/PostDetails";
+import { useNavigate } from "react-router";
+import { routes } from "../../global/config/routes";
 
 const postSchema = yup.object({
    title: yup.string().required("Вкажіть назву обʼяви"),
@@ -44,7 +46,7 @@ function CreatePostPage() {
    const {
       register,
       handleSubmit,
-      formState: { errors },
+      formState: { errors, isSubmitting },
       watch
    } = useForm<PostFormData>({
       resolver: yupResolver(postSchema),
@@ -57,6 +59,8 @@ function CreatePostPage() {
    const previewDescription = watch("description");
 
    const currentUser = useAtomValue(currentUserAtom);
+
+   const navigate = useNavigate();
 
    const onSubmit = async (data: PostFormData) => {
       if (!currentUser?.data?.role) {
@@ -86,6 +90,7 @@ function CreatePostPage() {
          ...data
       });
       toast.success("Обʼяву успішно створено");
+      navigate(routes.home);
    };
 
    return (
@@ -163,7 +168,7 @@ function CreatePostPage() {
                   </RadioCards.Item>
                </RadioCards.Root>
             </label>
-            <label className="mt-4 block">
+            <div className="mt-4 block">
                <p className="flex items-center gap-1">
                   Опис обʼяви{" "}
                   <Modal
@@ -180,7 +185,7 @@ function CreatePostPage() {
                   placeholder="# Необовʼязково*"
                   {...register("description")}
                />
-            </label>
+            </div>
             <div className="flex justify-end gap-2">
                {currentUser?.data?.role && (
                   <Modal
@@ -210,7 +215,7 @@ function CreatePostPage() {
                   />
                )}
 
-               <Button>Створити обʼяву</Button>
+               <Button loading={isSubmitting}>Створити обʼяву</Button>
             </div>
          </form>
       </section>

@@ -10,6 +10,8 @@ import { APICreateNewsItem } from "../../api/mutations";
 import toast from "react-hot-toast";
 import { Modal } from "../../components/theme/Modal";
 import { MardownGuide } from "../../components/MardownGuide";
+import { routes } from "../../global/config/routes";
+import { useNavigate } from "react-router";
 
 const postSchema = yup.object({
    title: yup.string().required("Вкажіть назву обʼяви"),
@@ -22,13 +24,15 @@ function CreateNewsItemPage() {
    const {
       register,
       handleSubmit,
-      formState: { errors }
+      formState: { errors, isSubmitting }
    } = useForm<PostFormData>({
       resolver: yupResolver(postSchema),
       defaultValues: {}
    });
 
    const currentUser = useAtomValue(currentUserAtom);
+
+   const navigate = useNavigate();
 
    const onSubmit = async (data: PostFormData) => {
       if (!currentUser?.data?.role) {
@@ -49,6 +53,7 @@ function CreateNewsItemPage() {
          content: data.description || ""
       });
       toast.success("Новину успішно створено");
+      navigate(routes.home);
    };
 
    return (
@@ -61,12 +66,12 @@ function CreateNewsItemPage() {
             <label className="block">
                <p>Назва новини</p>
                <TextField.Root
-                  placeholder="Загублений бобр"
+                  placeholder="Роздача собак на спавні"
                   {...register("title")}
                />
                {errors.title && <ErrorText>{errors.title.message}</ErrorText>}
             </label>
-            <label className="mt-4 block">
+            <div className="mt-4 block">
                <p className="flex items-center gap-1">
                   Опис новини{" "}
                   <Modal
@@ -83,12 +88,12 @@ function CreateNewsItemPage() {
                   placeholder="# Необовʼязково*"
                   {...register("description")}
                />
-            </label>
+            </div>
             <div className="flex justify-end gap-2">
                <Button variant="soft" color="gray" type="button">
                   Превʼю
                </Button>
-               <Button>Створити обʼяву</Button>
+               <Button loading={isSubmitting}>Створити обʼяву</Button>
             </div>
          </form>
       </section>

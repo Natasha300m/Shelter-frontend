@@ -6,10 +6,11 @@ import { Link } from "react-router";
 import { routes } from "../../global/config/routes";
 
 export function ShelterGroup({
+   disableTitle,
    id,
    name,
    posts
-}: PropsWithChildren & Shelter & { posts: Post[] }) {
+}: PropsWithChildren & Shelter & { posts: Post[]; disableTitle?: boolean }) {
    const displayPosts = posts.filter((post) => post.shelterID === id);
 
    if (displayPosts.length === 0) return <></>;
@@ -17,15 +18,19 @@ export function ShelterGroup({
    return (
       <div className="w-full">
          <div className="flex gap-2 items-center">
-            <h3 className="flex gap-2 items-center">
-               {name}
-               <Link
-                  to={routes.toShelter(id)}
-                  className="text-(--gray-10) hover:text-(--gray-12)"
-               >
-                  <i className="pi pi-arrow-right" />
-               </Link>
-            </h3>
+            {disableTitle ? (
+               <h3>Обʼяви</h3>
+            ) : (
+               <h3 className="flex gap-2 items-center">
+                  {name}
+                  <Link
+                     to={routes.toShelter(id)}
+                     className="text-(--gray-10) hover:text-(--gray-12)"
+                  >
+                     <i className="pi pi-arrow-right" />
+                  </Link>
+               </h3>
+            )}
             <Separator className="!grow" />
          </div>
          <div className="grid325px1fr gap-4 p-4">

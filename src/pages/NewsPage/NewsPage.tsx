@@ -11,11 +11,11 @@ function NewsPage() {
    });
 
    return (
-      <section className="containerX">
+      <section className="containerX !max-w-[800px]">
          <h2 className="text-center mt-8 mb-2">
             Новини <b className="text-(--accent-10)">Baratie</b>
          </h2>
-         <div className="max-w-[800px] mx-auto mb-2">
+         <div className="mb-2">
             <Separator className="!w-full" />
          </div>
          {isNewsItemsFetching && (

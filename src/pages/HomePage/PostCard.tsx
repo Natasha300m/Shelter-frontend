@@ -1,8 +1,7 @@
-import { Button, Card, ScrollArea, Spinner } from "@radix-ui/themes";
+import { Button, Card, Spinner } from "@radix-ui/themes";
 import { ImageWithLoader } from "../../components/theme/ImageWithLoader";
 import { Modal } from "../../components/theme/Modal";
 import { APIDeletePost, Post } from "../../api/mutations";
-import Markdown from "react-markdown";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "../../global/config/queryKeys";
 import { APIGetShelter, APIGetUser } from "../../api/queries";

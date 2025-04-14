@@ -17,7 +17,7 @@ function NewsItemCard({ newsItem }: { newsItem: NewsItem }) {
    });
 
    return (
-      <div className="max-w-[800px] mx-auto">
+      <div className="w-full">
          <h2>{newsItem.title}</h2>
          <div className="text-(--gray-10) p-2">
             <Markdown>{newsItem.content}</Markdown>

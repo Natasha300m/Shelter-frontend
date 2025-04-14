@@ -23,8 +23,15 @@ function HomePage() {
    const dispalyPosts = useMemo(
       () =>
          posts?.filter((post) => {
-            if (petType) {
-               if (post.petType !== petType) return false;
+            if (petType === "Інше") {
+               if (["пес", "кіт"].includes(post.petType.toLocaleLowerCase()))
+                  return false;
+            } else if (petType) {
+               if (
+                  post.petType.toLocaleLowerCase() !==
+                  petType.toLocaleLowerCase()
+               )
+                  return false;
             }
             if (petAge) {
                if (post.petAge !== petAge) return false;
@@ -36,6 +43,12 @@ function HomePage() {
          }),
       [posts, petAge, petType, needs]
    );
+
+   const volunteersPosts = useMemo(() => {
+      if (!dispalyPosts) return [];
+      if (dispalyPosts.length === 0) return [];
+      return dispalyPosts.filter((post) => post.authorRole === "VOLUNTEER");
+   }, [dispalyPosts]);
 
    const { data: shelters, isPending: isSheltersFetching } = useQuery({
       queryKey: queryKeys.shelters,
@@ -59,20 +72,25 @@ function HomePage() {
                      {shelters.map((shelter) => (
                         <ShelterGroup {...shelter} posts={dispalyPosts} />
                      ))}
-                     <div className="w-full">
-                        <div className="flex gap-2 items-center">
-                           <h3>Обвʼяви волонтерів</h3>
-                           <Separator className="!grow" />
+                     {volunteersPosts && volunteersPosts.length > 0 && (
+                        <div className="w-full">
+                           <div className="flex gap-2 items-center">
+                              <h3>Обвʼяви волонтерів</h3>
+                              <Separator className="!grow" />
+                           </div>
+                           <div className="grid325px1fr gap-4 p-4">
+                              {volunteersPosts.map((post) => (
+                                 <PostCard {...post} />
+                              ))}
+                           </div>
                         </div>
-                        <div className="grid325px1fr gap-4 p-4">
-                           {dispalyPosts.map((post) => {
-                              if (post.authorRole === "VOLUNTEER")
-                                 return <PostCard {...post} />;
-                              return <></>;
-                           })}
-                        </div>
-                     </div>
+                     )}
                   </>
+               )}
+               {dispalyPosts && dispalyPosts?.length === 0 && (
+                  <p className="text-(--gray-10) text-center">
+                     Обʼяв за заданим фільтром немає((
+                  </p>
                )}
             </section>
             <section className="w-full md:w-[250px] grow-0 shrink-0 order-1 md:order-2">

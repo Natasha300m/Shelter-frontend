@@ -43,7 +43,7 @@ function PostDetails({ post }: { post: Post }) {
          {post.description && (
             <div className="mt-2 p-2">
                <p className="text-(--gray-10)">Опис</p>
-               <ScrollArea className="!h-40">
+               <ScrollArea className="!h-40 !text-(--gray-11)">
                   <Markdown>{post.description}</Markdown>
                </ScrollArea>
             </div>
