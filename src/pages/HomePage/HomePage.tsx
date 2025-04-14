@@ -9,7 +9,11 @@ import { PropsWithChildren, useMemo, useState } from "react";
 function HomePage() {
    const [petType, setPetType] = useState("");
    const [petAge, setPetAge] = useState("");
-   const [needs] = useState("");
+   const [needs, setNeeds] = useState("");
+
+   const resetFilters = () => {
+      setPetType(""), setPetAge(""), setNeeds("");
+   };
 
    const { data: posts, isPending: isPostsFetching } = useQuery({
       queryKey: queryKeys.posts,
@@ -25,8 +29,8 @@ function HomePage() {
             if (petAge) {
                if (post.petAge !== petAge) return false;
             }
-            if (petAge) {
-               if (post.petAge !== petAge) return false;
+            if (needs) {
+               if (post.needs !== needs) return false;
             }
             return true;
          }),
@@ -71,7 +75,7 @@ function HomePage() {
                   </>
                )}
             </section>
-            <section className="w-[250px] grow-0 shrink-0 order-1 md:order-2">
+            <section className="w-full md:w-[250px] grow-0 shrink-0 order-1 md:order-2">
                <h2 className="text-xl">Фільтри пошуку:</h2>
                <div className="mt-2">
                   <h3>Тварина:</h3>
@@ -134,12 +138,40 @@ function HomePage() {
                </div>
 
                <div className="mt-2">
-                  <h3>Шукає:</h3>
+                  <h3>Потребує:</h3>
                   <div className="flex gap-2 flex-wrap mt-1">
-                     <Button variant="outline">Хозяїна</Button>
-                     <Button variant="outline">Притулок</Button>
-                     <Button variant="outline">Загублена тварина</Button>
+                     <ToggleButton
+                        value="owner"
+                        state={needs}
+                        setState={setNeeds}
+                     >
+                        Хозяїна
+                     </ToggleButton>
+                     <ToggleButton
+                        value="shelter"
+                        state={needs}
+                        setState={setNeeds}
+                     >
+                        Притулок
+                     </ToggleButton>
+                     <ToggleButton
+                        value="rescue"
+                        state={needs}
+                        setState={setNeeds}
+                     >
+                        Порятунку
+                     </ToggleButton>
                   </div>
+               </div>
+               <div className="mt-4">
+                  <Button
+                     variant="soft"
+                     color="gray"
+                     className="!w-full"
+                     onClick={resetFilters}
+                  >
+                     Скинути фільтри
+                  </Button>
                </div>
             </section>
          </div>
